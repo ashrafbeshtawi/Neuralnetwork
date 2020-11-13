@@ -78,8 +78,8 @@ def L_Relu(num):
 
 ## leaky RelU deriv
 def L_Relu_D(num):
-    num=np.where(num>0,num,0.01)
-    num=np.where(num==0,num,1)
+    num=np.where(num<=0,num,1)
+    num=np.where(num>=0,num,0.01)
 
     return num
 
