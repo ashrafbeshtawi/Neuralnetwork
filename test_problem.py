@@ -27,7 +27,7 @@ def Problem2D_Sig():
 
     #NN.test(x,y,input[0:100],output[0:100],NN.sig,NN.sig)
 
-    w,b=NN.train(input,output,k,l,NN.sig,NN.sig_deriv,NN.sig,NN.sig_deriv,1,90000,0.07)
+    w,b=NN.train(input,output,k,l,NN.sig,NN.sig_deriv,NN.sig,NN.sig_deriv,1,40000,0.07)
     NN.test(w,b,input[0:100],output[0:100],NN.sig,NN.sig)
 
 
@@ -62,7 +62,7 @@ def Problem2D_Relu():
 
 
 def Problem2D_LeakyRelu():
-    x,y=NN.get_component([2,10,10,1],"xavier")
+    x,y=NN.get_component([2,10,1],"xavier")
     k=x.copy()
     l=y.copy()
     input=[]
@@ -87,9 +87,9 @@ def Problem2D_LeakyRelu():
 
     #NN.test(x,y,input[0:100],output[0:100],NN.L_Relu,NN.sig)
 
-    w,b=NN.train(input,output,k,l,NN.L_Relu,NN.L_Relu,NN.sig,NN.sig_deriv,1,90000,0.07)
+    w,b=NN.train(input,output,k,l,NN.L_Relu,NN.L_Relu_D,NN.L_Relu,NN.L_Relu_D,1,40000,0.008)
     NN.test(w,b,input[0:100],output[0:100],NN.L_Relu,NN.sig)
 
-#Problem2D_Sig()
+Problem2D_Sig()
 #Problem2D_Relu()
 Problem2D_LeakyRelu()
