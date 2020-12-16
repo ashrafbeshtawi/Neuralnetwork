@@ -2,7 +2,7 @@ import main as NN
 import numpy as np
 
 def Problem2D_Sig():
-    x,y=NN.get_component([2,10,10,1],"xavier")
+    x,y=NN.get_component([2,10,10,1],"random")
     k=x.copy()
     l=y.copy()
     input=[]
@@ -62,7 +62,7 @@ def Problem2D_Relu():
 
 
 def Problem2D_LeakyRelu():
-    x,y=NN.get_component([2,10,1],"xavier")
+    x,y=NN.get_component([2,10,10,1],"xavier")
     k=x.copy()
     l=y.copy()
     input=[]
@@ -92,4 +92,4 @@ def Problem2D_LeakyRelu():
 
 Problem2D_Sig()
 #Problem2D_Relu()
-Problem2D_LeakyRelu()
+#Problem2D_LeakyRelu()

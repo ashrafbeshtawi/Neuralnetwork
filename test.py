@@ -18,9 +18,7 @@ def test_cost():
 
 def test_relu():
     x=np.array([1,2,3,-4,6,0])
-    #print(Relu(x))
-    #print(Relu_deriv(x))
-    print(x)
+
     print(L_Relu(x))
     print(L_Relu_D(x))
 test_relu()

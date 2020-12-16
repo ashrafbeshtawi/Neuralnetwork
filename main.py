@@ -31,8 +31,10 @@ def get_component(layers,init_type):
         layer=None
         if init_type=="xavier":
             layer=np.random.normal(0, m, (m,n))
-        elif init_type=="random":
+        elif init_type=="random_x":
             layer=np.multiply(np.random.rand(m,n),np.sqrt(2/m)) 
+        elif init_type=="random":
+            layer=np.random.rand(m,n)
 
         created_layers.append(layer)
     
@@ -115,15 +117,13 @@ def cost_calculate(prediction,correct):
 
 
 def train(input,output,weights_i,bias_i,activation_func,deriv,last_layer_activ_func,last_layer_activ_func_deriv,epoch_size,iterations,learning_rate):
-    ##total performance
-    total=np.array([0])
-    sum=0
-    ##
+
     weights=weights_i
     bias=bias_i
-    ##
+    ##reads input
     x,y=input.shape
     a,b=output.shape
+    #number of backpros steps
     back_prpg_steps=len(weights_i)
 
     if(x!=a):
@@ -170,17 +170,8 @@ def train(input,output,weights_i,bias_i,activation_func,deriv,last_layer_activ_f
         ## end of epoch
         ##  back propagation
 
-        ## error of the last layer
-        #print("error",error,error.shape)
-        #print("new back probgation")
         error=error[None]
         for j in range(back_prpg_steps-1,-1,-1):
-
-            #print("error",error,error.shape)
-            #print("weights",weights[j],weights[j].shape)
-            #print("bias",bias[j],bias[j].shape)
-
-
 
             ## choose the derivative function
             my_deriv=None
@@ -190,13 +181,10 @@ def train(input,output,weights_i,bias_i,activation_func,deriv,last_layer_activ_f
                 my_deriv=deriv
             
             #calculating the fixed value 
-            ## fixed= activation'(z).error
-            new_deriv=my_deriv(z[j]) #np.reshape(my_deriv(z[j]),-1)
-            #error=np.reshape(error,-1)
+            new_deriv=my_deriv(z[j]) 
             fixed=np.multiply(new_deriv,error)
-            #print("fixed old",fixed,fixed.shape)
             fixed=np.reshape(fixed,(1,fixed.shape[1]))
-            #print("fixed new",fixed,fixed.shape)
+
             
 
             #bias correction
@@ -251,106 +239,7 @@ def train(input,output,weights_i,bias_i,activation_func,deriv,last_layer_activ_f
 
     #print("component",weights,"\n bias",bias)
     return weights,bias
-"""
-    ## training for epoch
-    i=0
-    cost=None
-    for j in range(x//epoch):
 
-        ##training for single input
-        for k in range(epoch):
-
-            #reading input and correct answer
-            sub_input=input[i].T
-            correct=output[i].T
-            #make prediction
-            results,z=predict(sub_input,weights,bias,activation_func,last_layer_activ_func)
-            #calculate cost
-            local_cost=cost_calculate(np.round(results[-1]),correct)
-
-            if cost==None:
-                cost=local_cost
-            else:
-                cost=np.add(cost,local_cost)
-            ## calculate performence
-            total=total+np.average(local_cost)
-            sum=sum+1
-            i=i+1
-            #print("####################################################")
-            #print("Cost: ",local_cost,"input ",sub_input, "correct ",correct, " result", results[-1],"performance",1-total/sum)
-        cost=None
-
-        #back propagation
-        correct_for_this_layer=correct
-        neuron_activation_index=-1
-        learning_rate=0.1
-
-
-        for j in range(back_prpg_steps-1,-1,-1):
-            
-            ## correcting bias
-            ## fixed values   
-            ## fixed= sig'(z).2(a(L)-y)
-
-           # print("sig",sig_deriv(z[neuron_activation_index]),z[neuron_activation_index])
-            if(j==back_prpg_steps-1):
-                my_deriv=last_layer_activ_func_deriv
-            else:
-                my_deriv=deriv
-
-
-            fixed=np.multiply(my_deriv(z[neuron_activation_index]),np.subtract(results[neuron_activation_index],correct_for_this_layer))
-            bias_correction=np.multiply(fixed,learning_rate)
-            #print("fixed",fixed)
-            #print("deriv",my_deriv(z[neuron_activation_index]))
-
-
-            ## correcting weights
-            ## correction= a(L-1).fixed
-
-            ## we clone the lines of the last layer
-            last_layer_activation_expanded= np.array([results[neuron_activation_index-1]]*fixed.shape[0]) 
-            ## we clone the colomns of  fixed
-            fixed_expanded= np.transpose([fixed]*results[neuron_activation_index-1].shape[0])
-            ## elementwise multiplication
-            weights_correction=np.multiply(last_layer_activation_expanded,fixed_expanded)
-
-            
-            #print("last_layer_activation_expanded",last_layer_activation_expanded)
-            #print("fixed_expanded",fixed_expanded)
-            #print("weights_correction",weights_correction)
-            #print("bias_correction",bias_correction)
-            
-            ## with respect to the learn rate
-            weights_correction=np.multiply(weights_correction,learning_rate)
-
-
-
-
-            ## cost for next layer
-            ## correct= w(L).fixed0
-
-            ##flip the weights
-            w_f=weights[neuron_activation_index].T
-            #print("T",weights[neuron_activation_index].T)
-
-            ## we clone the lines of  fixed
-            f_f= np.transpose([fixed]*w_f.shape[0])
-
-
-
-            ## refresh the weights
-            weights[neuron_activation_index]=np.subtract(weights[neuron_activation_index],weights_correction)
-            ##refresh bias
-            bias[neuron_activation_index]= np.subtract(bias[neuron_activation_index],bias_correction)
-            
-            ##calculate cost for the next layer 
-            cost_next=w_f.dot(f_f)
-            correct_for_this_layer=np.multiply(cost_next.diagonal(),learning_rate)
-            neuron_activation_index=neuron_activation_index-1
-
-    return weights,bias
-"""
 
 
 
