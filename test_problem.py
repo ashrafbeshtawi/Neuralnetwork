@@ -1,5 +1,62 @@
 import main as NN
 import numpy as np
+import random
+
+def Problem_and():
+    x,y=NN.get_component([2,1],"xavier")
+    k=x.copy()
+    l=y.copy()
+    input=[]
+    output=[]
+    for i in range(500):
+        a= random.randrange(2)
+        b=random.randrange(2)
+        input_sub=[a,b]
+        r=None
+        if((a and  not b ) or (not a and b)):
+            r=1
+        else:
+            r=0
+
+        output_sub=[r]
+        input.append(input_sub)
+        output.append(output_sub)
+
+
+
+    input=np.array(input)
+    output=np.array(output)
+
+    w,b=NN.train(input,output,k,l,NN.sig,NN.sig_deriv,NN.sig,NN.sig_deriv,1,5000,0.0007)
+    NN.test_print(w,b,input[0:10],output[0:10],NN.sig,NN.sig)
+
+def Problem_xor():
+    x,y=NN.get_component([2,1],"xavier")
+    k=x.copy()
+    l=y.copy()
+    input=[]
+    output=[]
+    for i in range(500):
+        a= random.randrange(2)
+        b=random.randrange(2)
+        input_sub=[a,b]
+        r=None
+        if(a or  b ) :
+            r=1
+        else:
+            r=0
+
+        output_sub=[r]
+        input.append(input_sub)
+        output.append(output_sub)
+
+
+
+    input=np.array(input)
+    output=np.array(output)
+
+    w,b=NN.train(input,output,k,l,NN.sig,NN.sig_deriv,NN.sig,NN.sig_deriv,1,5000,0.07)
+    NN.test_print(w,b,input[0:10],output[0:10],NN.sig,NN.sig)
 
 def Problem2D_Sig():
     x,y=NN.get_component([2,10,10,1],"random")
@@ -90,6 +147,8 @@ def Problem2D_LeakyRelu():
     w,b=NN.train(input,output,k,l,NN.L_Relu,NN.L_Relu_D,NN.L_Relu,NN.L_Relu_D,1,40000,0.008)
     NN.test(w,b,input[0:100],output[0:100],NN.L_Relu,NN.sig)
 
-Problem2D_Sig()
+
+Problem_and()
+#Problem2D_Sig()
 #Problem2D_Relu()
 #Problem2D_LeakyRelu()

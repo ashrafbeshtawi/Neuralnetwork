@@ -117,13 +117,16 @@ def cost_calculate(prediction,correct):
 
 
 def train(input,output,weights_i,bias_i,activation_func,deriv,last_layer_activ_func,last_layer_activ_func_deriv,epoch_size,iterations,learning_rate):
-
+    #list for the costs
+    my_index=[]
+    costs=[]
+    #names corrections
     weights=weights_i
     bias=bias_i
     ##reads input
     x,y=input.shape
     a,b=output.shape
-    #number of backpros steps
+    #number of backprops steps
     back_prpg_steps=len(weights_i)
 
     if(x!=a):
@@ -142,7 +145,6 @@ def train(input,output,weights_i,bias_i,activation_func,deriv,last_layer_activ_f
     for i in range(number_of_epoches):
         ##calculating  error
         error=np.zeros([number_nuerons_last_layer])
-        #print("error reset",error,error.shape)
         ## cost function result
         cost=np.zeros([number_nuerons_last_layer])
         ## going throw epoches
@@ -163,13 +165,17 @@ def train(input,output,weights_i,bias_i,activation_func,deriv,last_layer_activ_f
             cost=np.add(cost,local_cost)
             # adding the error
             error=np.add(error,local_error)
+        #averaging cost and error
+        cost=np.divide(cost,epoch_size)
+        error=np.divide(error,epoch_size)
+        # save the cost in the list
+        costs.append(cost[0])
+        my_index.append(costs.index(cost))
 
 
 
 
-        ## end of epoch
         ##  back propagation
-
         error=error[None]
         for j in range(back_prpg_steps-1,-1,-1):
 
@@ -190,37 +196,16 @@ def train(input,output,weights_i,bias_i,activation_func,deriv,last_layer_activ_f
             #bias correction
             bias_correction=np.multiply(fixed,learning_rate).T
             ## calculating weights correction
-            ## we clone the lines of the last layer
-            # !!!! danger section may contain errors
-            #last_layer_activation_expanded= np.array([results[j]]*fixed.shape[0]) 
-            ## we clone the colomns of  fixed
-            #fixed_expanded= np.transpose([fixed]*results[j].shape[0])
-            ##
-            #print("target",results[j].shape,results[j][None].shape,results[j][None].T.shape)
-            #print("actual",np.asmatrix(results[j]).T.shape,fixed[None].shape)
-            #print("result",np.asmatrix(results[j]).T,np.asmatrix(results[j]).T.shape)
             weights_correction=np.dot(np.asmatrix(results[j]).T,fixed).T
 
-            
-
-            ## elementwise multiplication
-            #weights_correction=np.multiply(last_layer_activation_expanded,fixed_expanded)
-            #print("old",weights_correction)
 
             ## with respect to the learn rate
             weights_correction=np.multiply(weights_correction,learning_rate)
-            # !!! end of danger
+
 
             ## error for next layer
             ##flip the weights
             w_f=weights[j].T
-            #print("T",weights[neuron_activation_index].T)
-
-            ## we clone the lines of  fixed
-            #f_f= np.transpose([fixed]*w_f.shape[0])
-            #print(w_f,f_f)
-
-
             error=np.multiply(w_f.dot(fixed.T).T,learning_rate)
 
 
@@ -234,6 +219,8 @@ def train(input,output,weights_i,bias_i,activation_func,deriv,last_layer_activ_f
             bias[j]= np.subtract(bias[j],bias_correction)[-1]
             #print("weight corrections",weights_correction,weights_correction.shape)
             #print("bias corrections",bias_correction,bias_correction.shape)
+    plt.plot(my_index,costs)
+    plt.show()
 
 
 
