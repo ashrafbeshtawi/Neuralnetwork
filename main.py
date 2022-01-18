@@ -62,6 +62,9 @@ def sig_deriv(num):
     res=sig(num)
     return np.multiply(res,np.subtract(1,res))
 
+## tahn
+def tanh(x):
+	return (np.exp(x) - np.exp(-x)) / (np.exp(x) + np.exp(-x))
 ## RelU
 def Relu(num):
     return np.where(num>0,num,0)
@@ -94,16 +97,12 @@ def predict(input,weights,bias,activation_func,last_layer_activ_func):
     z=[]
     layer_activation=[input]
     for i in range(len(weights)):
-        #print(np.dot(weights[i],activation),bias[i])
-        #print(np.add(np.dot(weights[i],activation),bias[i]))
         z_temp=np.add(np.dot(weights[i],activation),bias[i])
-
 
         if(i==len(weights)-1):
             activation=last_layer_activ_func(z_temp)
         else:
             activation=activation_func(z_temp)
-
 
         z.append(z_temp)
         layer_activation.append(activation)
@@ -262,22 +261,14 @@ def test(w,b,input,output,activ,last_activ):
             #make prediction
             results,z=predict(sub_input,weights,bias,activ,last_activ)
             #calculate cost
-            local_cost=cost_calculate(np.round(results[-1]),correct)
-            ## plot ... to be removed later
-            #print(sub_input,np.round(results[-1]),correct)
-            
-            c=None
-            if np.round(results[-1])==1:
-                c="red"
-            else:
-                c="blue"
-            plt.scatter(sub_input[0],sub_input[1],color=c)
+            local_cost=np.abs(np.subtract(np.round(results[-1]),correct))         
 
             ## calculate performence
             total=total+np.average(local_cost)
             sum=sum+1
             i=i+1
-    plt.show()
+    return 1-(total/sum)
+
 
 
 def test_print(w,b,input,output,activ,last_activ):
@@ -298,12 +289,10 @@ def test_print(w,b,input,output,activ,last_activ):
             #make prediction
             results,z=predict(sub_input,weights,bias,activ,last_activ)
             #calculate cost
-            local_cost=cost_calculate(np.round(results[-1]),correct)
+            local_cost=np.abs(np.subtract(np.round(results[-1]),correct))
 
             print(sub_input,np.round(results[-1]),correct)
             
-
-
             ## calculate performence
             total=total+np.average(local_cost)
             sum=sum+1
