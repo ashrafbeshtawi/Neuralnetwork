@@ -2,6 +2,71 @@ import numpy as np
 import random
 from matplotlib import pyplot as plt
 
+
+class NeuralNetwork:
+    ## init the neural network
+    def get_component(self,layers,init_type):
+        created_layers=[]
+        bias=[]
+        ##create weight matricies of layers 
+        for i in range(len(layers)-1):
+            m=layers[i+1]
+            n=layers[i]
+            ## init type
+            layer=None
+            if init_type=="xavier":
+                layer=np.random.normal(0, m, (m,n))
+            elif init_type=="random_x":
+                layer=np.multiply(np.random.rand(m,n),np.sqrt(2/m)) 
+            elif init_type=="random":
+                layer=np.random.rand(m,n)
+
+            created_layers.append(layer)
+        
+        ## create bias
+        for i in range(1,len(layers)):
+            n=layers[i]
+            ## init type
+            if init_type=="xavier":
+                layer=np.zeros(n)
+            elif init_type=="random":
+                layer=np.zeros(n)
+
+            bias.append(layer)
+
+        return created_layers,bias
+
+    def __init__(self,layers, init_type) -> None:
+        self.weights, self.bias = self.get_component(layers,init_type)
+    
+    def get_weights(self):
+        return self.weights
+
+    def set_weights(self,weights):
+        self.weights = weights 
+
+    def get_bias(self):
+        return self.bias 
+
+    def set_bias(self,bias):
+        self.bias = bias        
+
+    #predict : makre prediction and return activation of each layer
+    def predict(input,weights,bias,activation_func,last_layer_activ_func):
+        activation=input
+        z=[]
+        layer_activation=[input]
+        for i in range(len(weights)):
+            z_temp=np.add(np.dot(weights[i],activation),bias[i])
+
+            if(i==len(weights)-1):
+                activation=last_layer_activ_func(z_temp)
+            else:
+                activation=activation_func(z_temp)
+
+            z.append(z_temp)
+            layer_activation.append(activation)
+        return layer_activation,z
 #print component of NT
 def print_component(weights,bias):
     for i in range(len(weights)):
@@ -19,94 +84,11 @@ def print_component(weights,bias):
 
 
 
-## init
-def get_component(layers,init_type):
-    created_layers=[]
-    bias=[]
-    ##create weight matricies of layers 
-    for i in range(len(layers)-1):
-        m=layers[i+1]
-        n=layers[i]
-        ## init type
-        layer=None
-        if init_type=="xavier":
-            layer=np.random.normal(0, m, (m,n))
-        elif init_type=="random_x":
-            layer=np.multiply(np.random.rand(m,n),np.sqrt(2/m)) 
-        elif init_type=="random":
-            layer=np.random.rand(m,n)
-
-        created_layers.append(layer)
-    
-    ## create bias
-    for i in range(1,len(layers)):
-        n=layers[i]
-        ## init type
-        if init_type=="xavier":
-            layer=np.zeros(n)
-        elif init_type=="random":
-            layer=np.zeros(n)
-
-        bias.append(layer)
-
-    return created_layers,bias
-
-## sigmoid activion
-def sig(num):
-    if -np.min(num) > np.log(np.finfo(type(1.1)).max):
-        return np.zeros(num.shape)  
-    return np.divide(1,np.add(1,np.exp(-num)))
-
-## derviative of sigmoid
-def sig_deriv(num):
-    res=sig(num)
-    return np.multiply(res,np.subtract(1,res))
-
-## tahn
-def tanh(x):
-	return (np.exp(x) - np.exp(-x)) / (np.exp(x) + np.exp(-x))
-## RelU
-def Relu(num):
-    return np.where(num>0,num,0)
-
-
-## Relu derivative
-def Relu_deriv(num):
-    num=np.where(num>0,num,0)
-    num=np.where(num==0,num,1)
-
-    return num
-
-## leaky RelU
-def L_Relu(num):
-    return np.where(num>0,num,0.01*num)
-
-## leaky RelU deriv
-def L_Relu_D(num):
-    num=np.where(num<=0,num,1)
-    num=np.where(num>=0,num,0.01)
-
-    return num
 
 
 
 
-#predict : makre prediction and return activation of each layer
-def predict(input,weights,bias,activation_func,last_layer_activ_func):
-    activation=input
-    z=[]
-    layer_activation=[input]
-    for i in range(len(weights)):
-        z_temp=np.add(np.dot(weights[i],activation),bias[i])
 
-        if(i==len(weights)-1):
-            activation=last_layer_activ_func(z_temp)
-        else:
-            activation=activation_func(z_temp)
-
-        z.append(z_temp)
-        layer_activation.append(activation)
-    return layer_activation,z
 
 
 # cost function
@@ -299,65 +281,6 @@ def test_print(w,b,input,output,activ,last_activ):
             i=i+1
 
             
-
-            
-    
-
-
-
-
-
-
-
-
-
-"""
-x,y=get_component([3,10,10,1],"xavier")
-k=x.copy()
-l=y.copy()
-
-#x=np.multiply(sig_deriv(5.1),np.multiply(2,np.subtract(0.99704446,0)))
-
-#print(sig_deriv(5.1))
-#exit()
-
-
-input=[]
-output=[]
-for i in range(500):
-    a=random.randint(0, 1)# int(np.random.uniform(-1000, 1000))
-    b=random.randint(0, 1)#int(np.random.uniform(-1000, 1000))
-    c=random.randint(0, 1)#int(np.random.uniform(-1000, 1000))
-    input_sub=[a,b,c]
-    r=None
-    if((a<0 and b<0 ) or (a>0 and b>0)):
-        #print("1 point",a,b)
-        r=1
-    else:
-        r=0
-                # xor
-    output_sub=[(a and not b and not c) or (b and not a and not c) or (c and not a and not b) or (a and b and c)]
-    input.append(input_sub)
-    output.append(output_sub)
-
-
-input=np.array(input)
-output=np.array(output)
-
-test_print(x,y,input[0:10],output[0:10],Relu,sig)
-
-#print(x,y)
-#w,b=train(input,output,x,y,L_Relu,L_Relu_D,sig,sig_deriv,1,9000,0.07)
-#test(w,b,input[0:100],output[0:100],Relu,sig)
-
-w,b=train(input,output,k,l,sig,sig_deriv,sig,sig_deriv,1,90000,0.07)
-test_print(w,b,input[0:30],output[0:30],sig,sig)
-
-
-
-
-
-"""
 
 
 
