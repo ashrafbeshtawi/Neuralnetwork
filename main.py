@@ -37,6 +37,7 @@ class NeuralNetwork:
         return created_layers,bias
 
     def __init__(self,layers, init_type) -> None:
+        self.layers = layers
         self.weights, self.bias = self.get_component(layers,init_type)
     
     def get_weights(self):
