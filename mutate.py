@@ -1,30 +1,34 @@
 from ast import operator
 from operator import ge
-import main
+from main import NeuralNetwork, test_print
+import helper
 import data
 import random
 import numpy as np
-NUMBER_OF_GENERATION = 50
-GENERATION_SIZE = 200
+
+## CONSTANTS
+NUMBER_OF_GENERATIONS = 50
+GENERATION_SIZE = 500
 SELECTION_RATIO = 0.5
-MUTATION_RATIO = 1
-NUMBERS_PER_NETWORK = 100
+STARTING_STRUCTURE = [2,2,1]
+HIDDEN_LAYERS_ACTIVIATION = helper.Relu
+LAST_LAYER_ACTIVATION = helper.tanh
 
 
 ## chose & mutate Nueral network
 def mutate(generation,old_population_limit):
     ## pick a NN
-    NN = generation[random.randint(0,old_population_limit-1)]
+    NN = generation[random.randint(0,old_population_limit-1)]['Neuralnetwork']
+    w_old = NN.get_weights()
+    b_old = NN.get_bias()
     w_copy = []
     b_copy = []
     ### copy weights
-    for i in range(len(NN['weights'])):
-        w_copy.append(np.copy(NN['weights'][i]))
+    for i in range(len(w_old)):
+        w_copy.append(np.copy(w_old[i]))
     ## copy bias
-    for i in range(len(NN['bias'])):
-        b_copy.append(np.copy(NN['bias'][i]))
-
-
+    for i in range(len(b_old)):
+        b_copy.append(np.copy(b_old[i]))
 
     ## chose to mutate weights or bias
     chance = random.randint(0,1)
@@ -51,30 +55,27 @@ def mutate(generation,old_population_limit):
         b_copy[layer][neuron] = bias_value + muation * bias_value + random_push
     
     ## save new NN
-    generation += [{'weights':w_copy,'bias':b_copy,'performace':0}]
+    nn_mutated = NeuralNetwork([],'xavier')
+    nn_mutated.set_weights(w_copy)
+    nn_mutated.set_bias(b_copy)
+
+    generation += [{'Neuralnetwork':nn_mutated,'performace':0}]
 
 
-## create copies (kids) of NN
-def copy(generation,old_population_limit):
-    ## pick a NN
-    NN = generation[random.randint(0,old_population_limit-1)]
-    w_copy = NN['weights'].copy()
-    b_copy = NN['bias'].copy()
-    generation += [{'weights':w_copy,'bias':b_copy,'performace':0}]
 
 
-## saved in in (w,b,performace) pairs
+## saved in in (Neuralnetwork,performace) pairs
 generation = []
 
 input,output = data.get_xy_problems(200,-1,1)
 ## generate first generation
 for i in range(GENERATION_SIZE):
-    w, b =main.get_component([2,2,1],'xavier')
-    performance = main.test(w,b,input,output,main.Relu,main.sig)
+    nn = NeuralNetwork(STARTING_STRUCTURE,'xavier')
+    performance = nn.test(input,output,HIDDEN_LAYERS_ACTIVIATION,LAST_LAYER_ACTIVATION)
     ## save generation with performace
-    generation.append({'weights':w,'bias':b,'performace':performance[0]})
+    generation.append({'Neuralnetwork':nn,'performace':performance[0]})
 
-for i in range(NUMBER_OF_GENERATION):
+for i in range(NUMBER_OF_GENERATIONS):
     ### sorting the generation
     generation.sort(key=lambda x:x['performace'],reverse = True)
 
@@ -89,18 +90,21 @@ for i in range(NUMBER_OF_GENERATION):
     print('Best Fix: ',generation[0]['performace']*100,'Worst Fix: ',generation[-1]['performace']*100)
     ### Start mutations & creating generations
     for i in range(to_be_created):
-        chance = random.uniform(0, 1)
-        if (chance <= MUTATION_RATIO):
             mutate(generation,survived)
-        else:
-            copy(survived)
     ### test generation
     for i in range(len(generation)):
-            performance = main.test(generation[i]['weights'],generation[i]['bias'],input,output,main.Relu,main.sig)
+            performance = generation[i]['Neuralnetwork'].test(input,output,HIDDEN_LAYERS_ACTIVIATION,LAST_LAYER_ACTIVATION)
             generation[i]['performace'] = performance[0]
     
 
-main.test_print(generation[0]['weights'],generation[i]['bias'],input,output,main.Relu,main.sig)
+### best fit
+best_nn = generation[0]['Neuralnetwork']
+#test_print(best_nn.get_weights(),best_nn.get_bias(),input,output,HIDDEN_LAYERS_ACTIVIATION,LAST_LAYER_ACTIVATION)
+
+
+input,output = data.get_xy_problems(1000,-1,1)
+print(best_nn.test(input,output,HIDDEN_LAYERS_ACTIVIATION,LAST_LAYER_ACTIVATION)*100)
+
 
 
 

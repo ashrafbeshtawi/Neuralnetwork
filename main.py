@@ -52,14 +52,14 @@ class NeuralNetwork:
         self.bias = bias        
 
     #predict : makre prediction and return activation of each layer
-    def predict(input,weights,bias,activation_func,last_layer_activ_func):
+    def predict(self,input,activation_func,last_layer_activ_func):
         activation=input
         z=[]
         layer_activation=[input]
-        for i in range(len(weights)):
-            z_temp=np.add(np.dot(weights[i],activation),bias[i])
+        for i in range(len(self.weights)):
+            z_temp=np.add(np.dot(self.weights[i],activation),self.bias[i])
 
-            if(i==len(weights)-1):
+            if(i==len(self.weights)-1):
                 activation=last_layer_activ_func(z_temp)
             else:
                 activation=activation_func(z_temp)
@@ -67,6 +67,53 @@ class NeuralNetwork:
             z.append(z_temp)
             layer_activation.append(activation)
         return layer_activation,z
+    
+    # cost function
+    def cost_calculate(self,prediction,correct):
+        return np.divide(np.power(np.subtract(correct,prediction),2),2)
+
+
+    def test(self,input,output,activ,last_activ):
+        ##total performance
+        total=np.array([0])
+        sum=0
+        ##
+        weights=self.weights
+        bias=self.bias
+        ##
+        x,y=input.shape
+        a,b=output.shape
+
+        for i in range(x):
+                #reading input and correct answer
+                sub_input=input[i].T
+                correct=output[i].T
+                #make prediction
+                results,z=self.predict(sub_input,activ,last_activ)
+                #calculate cost
+                local_cost=np.abs(np.subtract(np.round(results[-1]),correct))         
+
+                ## calculate performence
+                total=total+np.average(local_cost)
+                sum=sum+1
+                i=i+1
+        return 1-(total/sum)
+
+#predict : makre prediction and return activation of each layer
+def predict(input,weights,bias,activation_func,last_layer_activ_func):
+    activation=input
+    z=[]
+    layer_activation=[input]
+    for i in range(len(weights)):
+        z_temp=np.add(np.dot(weights[i],activation),bias[i])
+        if(i==len(weights)-1):
+            activation=last_layer_activ_func(z_temp)
+        else:
+            activation=activation_func(z_temp)
+        z.append(z_temp)
+        layer_activation.append(activation)
+    return layer_activation,z
+
 #print component of NT
 def print_component(weights,bias):
     for i in range(len(weights)):
@@ -81,13 +128,6 @@ def print_component(weights,bias):
         print("bias: ",bias[i])
 
         print("-----------")
-
-
-
-
-
-
-
 
 
 
