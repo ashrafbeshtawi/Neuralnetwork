@@ -52,6 +52,12 @@ class NeuralNetwork:
     def set_bias(self,bias):
         self.bias = bias        
 
+    def get_layers(self):
+        return self.layers 
+
+    def set_layers(self,layers):
+        self.layers = layers        
+
     #predict : makre prediction and return activation of each layer
     def predict(self,input,activation_func,last_layer_activ_func):
         activation=input

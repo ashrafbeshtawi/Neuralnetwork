@@ -6,13 +6,19 @@ import data
 import random
 import numpy as np
 
-## CONSTANTS
+### GENERATION CONFIG
 NUMBER_OF_GENERATIONS = 100
 GENERATION_SIZE = 1000
-SELECTION_RATIO = 0.5
+### NN CONFIG
 STARTING_STRUCTURE = [2,2,1]
 HIDDEN_LAYERS_ACTIVIATION = helper.Relu
 LAST_LAYER_ACTIVATION = helper.tanh
+### MUTAION CONFIG
+## rare mutation means new layer
+## normal mutation is adjestment to available layer
+CHANCE_OF_RARE_MUTAION = 100
+SELECTION_RATIO = 0.5
+
 
 
 ## chose & mutate Nueral network
@@ -23,6 +29,7 @@ def mutate(generation,old_population_limit):
     b_old = NN.get_bias()
     w_copy = []
     b_copy = []
+    layers_copy = NN.get_layers().copy()
     ### copy weights
     for i in range(len(w_old)):
         w_copy.append(np.copy(w_old[i]))
@@ -31,31 +38,48 @@ def mutate(generation,old_population_limit):
         b_copy.append(np.copy(b_old[i]))
 
     ## chose to mutate weights or bias
-    chance = random.randint(0,1)
-    ## mutate weights
-    if(chance == 0):  
-        ## pick random layer
-        layer = random.randint(0,len(w_copy)-1)
-        ## pick connection
-        connection = random.randint(0,w_copy[layer].shape[1]-1)
-        ## mutating connection
-        muation = random.uniform(-0.1, 0.1)
-        connection_value = w_copy[layer][0,connection]
-        w_copy[layer][0,connection] = connection_value + muation * connection_value
-    ## mutate bias
+    rare_mutation = random.randint(0,100)
+    if(rare_mutation < CHANCE_OF_RARE_MUTAION):
+        ## layer size is random and between 1 neuron to the biggest available layer +- 10%
+        layer_size = np.random.randint(1,max(layers_copy)+1)
+        layer_size = layer_size +  np.random.uniform(0,1) * layer_size
+        layer_size = max(1,int(layer_size))
+        layer_position = max(1,np.random.randint(0,len(layers_copy)-1))
+        ## generate new dummy nn with the desired new layer
+        layers_copy.insert(layer_position,layer_size)
+        nn_mutated = NeuralNetwork(layers_copy,'xavier')
+        ## save new bias
+        b_copy.insert(layer_position-1,nn_mutated.get_bias()[layer_position-1])
+        ## save new weights
+        del w_copy[layer_position-1]
+        w_copy.insert(layer_position-1,nn_mutated.get_weights()[layer_position-1])
+        w_copy.insert(layer_position,nn_mutated.get_weights()[layer_position])
     else:
-        ## pick random layer
-        layer = random.randint(0,len(b_copy)-1)
-        ## pick neuron
-        neuron = random.randint(0,b_copy[layer].shape[0]-1)
-        ## mutating bias
-        muation = random.uniform(-0.1, 0.1)
-        random_push = random.uniform(-0.1, 0.1)
-        bias_value = b_copy[layer][neuron]
-        b_copy[layer][neuron] = bias_value + muation * bias_value + random_push
+        chance = random.randint(0,100)
+        ## mutate weights
+        if(chance >= 50):  
+            ## pick random layer
+            layer = random.randint(0,len(w_copy)-1)
+            ## pick connection
+            connection = random.randint(0,w_copy[layer].shape[1]-1)
+            ## mutating connection
+            muation = random.uniform(-0.1, 0.1)
+            connection_value = w_copy[layer][0,connection]
+            w_copy[layer][0,connection] = connection_value + muation * connection_value
+        ## mutate bias
+        else:
+            ## pick random layer
+            layer = random.randint(0,len(b_copy)-1)
+            ## pick neuron
+            neuron = random.randint(0,b_copy[layer].shape[0]-1)
+            ## mutating bias
+            muation = random.uniform(-0.1, 0.1)
+            random_push = random.uniform(-0.1, 0.1)
+            bias_value = b_copy[layer][neuron]
+            b_copy[layer][neuron] = bias_value + muation * bias_value + random_push
     
     ## save new NN
-    nn_mutated = NeuralNetwork([],'xavier')
+    nn_mutated = NeuralNetwork(nn.get_layers(),'xavier')
     nn_mutated.set_weights(w_copy)
     nn_mutated.set_bias(b_copy)
 
@@ -88,6 +112,8 @@ for i in range(NUMBER_OF_GENERATIONS):
     ### print results
     print('Generation:',i)
     print('Best Fix: ',generation[0]['performace']*100,'Worst Fix: ',generation[-1]['performace']*100)
+    print('Best Fix: ',generation[0]['Neuralnetwork'].get_layers(),'Worst Fix: ',generation[-1]['Neuralnetwork'].get_layers())
+
     ### Start mutations & creating generations
     for i in range(to_be_created):
             mutate(generation,survived)
