@@ -8,7 +8,7 @@ import numpy as np
 
 ### GENERATION CONFIG
 NUMBER_OF_GENERATIONS = 100
-GENERATION_SIZE = 1000
+GENERATION_SIZE = 100
 ### NN CONFIG
 STARTING_STRUCTURE = [2,2,1]
 HIDDEN_LAYERS_ACTIVIATION = helper.Relu
@@ -16,7 +16,7 @@ LAST_LAYER_ACTIVATION = helper.tanh
 ### MUTAION CONFIG
 ## rare mutation means new layer
 ## normal mutation is adjestment to available layer
-CHANCE_OF_RARE_MUTAION = 100
+CHANCE_OF_RARE_MUTAION = 50
 SELECTION_RATIO = 0.5
 
 
@@ -40,7 +40,7 @@ def mutate(generation,old_population_limit):
     ## chose to mutate weights or bias
     rare_mutation = random.randint(0,100)
     if(rare_mutation < CHANCE_OF_RARE_MUTAION):
-        ## layer size is random and between 1 neuron to the biggest available layer +- 10%
+        ## layer size is random and between 1 neuron to the biggest available layer + random number
         layer_size = np.random.randint(1,max(layers_copy)+1)
         layer_size = layer_size +  np.random.uniform(0,1) * layer_size
         layer_size = max(1,int(layer_size))
@@ -79,7 +79,7 @@ def mutate(generation,old_population_limit):
             b_copy[layer][neuron] = bias_value + muation * bias_value + random_push
     
     ## save new NN
-    nn_mutated = NeuralNetwork(nn.get_layers(),'xavier')
+    nn_mutated = NeuralNetwork(layers_copy,'xavier')
     nn_mutated.set_weights(w_copy)
     nn_mutated.set_bias(b_copy)
 

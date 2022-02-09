@@ -2,8 +2,8 @@ from main import NeuralNetwork
 import numpy as np
 import helper
 
-nn = NeuralNetwork([1,2,3,4],'xavier')
 for i in range(100):
+    nn = NeuralNetwork([1,2,3,4],'xavier')
     ## copy the layers sizes & the max layer size
     layers = nn.layers.copy()
     ## layer size is random and between 1 neuron to the biggest available layer +- 10%
