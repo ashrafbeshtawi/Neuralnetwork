@@ -8,10 +8,10 @@ import numpy as np
 
 ### GENERATION CONFIG
 NUMBER_OF_GENERATIONS = 100
-GENERATION_SIZE = 100
+GENERATION_SIZE = 500
 ### NN CONFIG
-STARTING_STRUCTURE = [2,2,1]
-HIDDEN_LAYERS_ACTIVIATION = helper.Relu
+STARTING_STRUCTURE = [2,2,3,4,5,1]
+HIDDEN_LAYERS_ACTIVIATION = helper.sig
 LAST_LAYER_ACTIVATION = helper.tanh
 ### MUTAION CONFIG
 ## rare mutation means new layer
@@ -91,7 +91,9 @@ def mutate(generation,old_population_limit):
 ## saved in in (Neuralnetwork,performace) pairs
 generation = []
 
-input,output = data.get_xy_problems(200,-1,1)
+#input,output = data.get_xy_problems(200,-1,1)
+input,output = data.logical(200)
+
 ## generate first generation
 for i in range(GENERATION_SIZE):
     nn = NeuralNetwork(STARTING_STRUCTURE,'xavier')
@@ -111,8 +113,8 @@ for i in range(NUMBER_OF_GENERATIONS):
 
     ### print results
     print('Generation:',i)
-    print('Best Fix: ',generation[0]['performace']*100,'Worst Fix: ',generation[-1]['performace']*100)
-    print('Best Fix: ',generation[0]['Neuralnetwork'].get_layers(),'Worst Fix: ',generation[-1]['Neuralnetwork'].get_layers())
+    print('Best Neural Network: ',generation[0]['performace']*100,'%','Worst Neural Network: ',generation[-1]['performace']*100,'%')
+    print('Best NN structure: ',generation[0]['Neuralnetwork'].get_layers(),'Worst NN structure:: ',generation[-1]['Neuralnetwork'].get_layers())
 
     ### Start mutations & creating generations
     for i in range(to_be_created):
@@ -128,7 +130,9 @@ best_nn = generation[0]['Neuralnetwork']
 #test_print(best_nn.get_weights(),best_nn.get_bias(),input,output,HIDDEN_LAYERS_ACTIVIATION,LAST_LAYER_ACTIVATION)
 
 
-input,output = data.get_xy_problems(1000,-1,1)
+#input,output = data.get_xy_problems(1000,-1,1)
+input,output = data.logical(1000)
+
 print(best_nn.test(input,output,HIDDEN_LAYERS_ACTIVIATION,LAST_LAYER_ACTIVATION)*100)
 
 

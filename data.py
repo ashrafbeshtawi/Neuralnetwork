@@ -18,4 +18,18 @@ def get_xy_problems(number_of_samples,from_range,to_range):
     return np.array(input),np.array(output)
 
 
+def logical(number_of_samples):
+    input = []
+    output = []
+    for i in range(number_of_samples):
+        x = random.randint(0,1)
+        y = random.randint(0,1)
+        input.append([x,y])
+        if ((x and not y) or (not x and  y)):
+            output.append([1])
+        else:
+            output.append([0]) 
+    return np.array(input),np.array(output)
+
+
 
