@@ -1,3 +1,4 @@
+from itertools import count
 import random
 import numpy as np
 
@@ -30,6 +31,20 @@ def logical(number_of_samples):
         else:
             output.append([0]) 
     return np.array(input),np.array(output)
+
+def fourones(number_of_samples):
+    input = []
+    output = []
+    for i in range(number_of_samples):
+        temp = []
+        for j in range(16):
+            temp.append(random.randint(0,1))
+        input.append(temp)
+        if (temp[0:3] == [1,1,1,1]):
+            output.append([1])
+        else:
+            output.append([0])  
+    return np.array(input),np.array(output)    
 
 
 

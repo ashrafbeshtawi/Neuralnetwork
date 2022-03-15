@@ -10,7 +10,7 @@ import numpy as np
 NUMBER_OF_GENERATIONS = 100
 GENERATION_SIZE = 500
 ### NN CONFIG
-STARTING_STRUCTURE = [2,2,3,4,5,1]
+STARTING_STRUCTURE = [16,2,2,3,4,5,1]
 HIDDEN_LAYERS_ACTIVIATION = helper.sig
 LAST_LAYER_ACTIVATION = helper.tanh
 ### MUTAION CONFIG
@@ -92,7 +92,9 @@ def mutate(generation,old_population_limit):
 generation = []
 
 #input,output = data.get_xy_problems(200,-1,1)
-input,output = data.logical(200)
+#input,output = data.logical(200)
+input,output = data.fourones(200)
+
 
 ## generate first generation
 for i in range(GENERATION_SIZE):
@@ -131,7 +133,7 @@ best_nn = generation[0]['Neuralnetwork']
 
 
 #input,output = data.get_xy_problems(1000,-1,1)
-input,output = data.logical(1000)
+input,output = data.fourones(1000)
 
 print(best_nn.test(input,output,HIDDEN_LAYERS_ACTIVIATION,LAST_LAYER_ACTIVATION)*100)
 
