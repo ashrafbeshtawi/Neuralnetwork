@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation 
 import numpy as np 
 
-#plt.style.use('dark_background')
 
 fig = plt.figure() 
 ax = plt.axes(xlim=(-50, 50), ylim=(-50, 50)) 
