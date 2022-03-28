@@ -1,4 +1,4 @@
-from main import NeuralNetwork 
+from lib import NeuralNetwork 
 import numpy as np
 import helper
 

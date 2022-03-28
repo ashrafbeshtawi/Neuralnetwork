@@ -1,4 +1,4 @@
-import main as NN
+import lib as NN
 import numpy as np
 
 def Problem2D_Sig():
