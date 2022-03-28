@@ -1,49 +1,51 @@
 import matplotlib.pyplot as plt 
-import matplotlib.animation as animation 
-import numpy as np 
+import matplotlib.animation as ani
 
-
+nn = None
+PLOT_HEIGHT = 1000
+PLOT_WIDTH = 1000
 fig = plt.figure() 
-ax = plt.axes(xlim=(-50, 50), ylim=(-50, 50)) 
-line, = ax.plot([], [], lw=2) 
+plt.xlim(0, PLOT_WIDTH)
+plt.ylim(0, PLOT_HEIGHT)
+graph, = plt.plot([], [], 'o')
+
+def runGraph():
+    animator = ani.FuncAnimation(fig, anim, fargs= (NeuralNetwork_layers,), interval = 3000)
+    plt.show()
+
+def anim(i, NeuralNetwork_layers):
+    print(NeuralNetwork_layers)
+    return
+    if (nn == None) :
+        return
+    layers = nn
+    x = []
+    y = []
+    ## draw neurons
+    current_x = 0
+    distance = PLOT_WIDTH/(len(layers)+1)
+    for i in range(len(layers)):
+        current_x = current_x + distance
+        x = x + [current_x]*layers[i]
+    
+    for i in range(len(layers)):
+        distance = PLOT_HEIGHT/(layers[i]+1)
+        current_y = 0
+        for j in range(layers[i]):
+            current_y = current_y + distance
+            y = y + [current_y]
+
+    ## draw connections
+    for i in range(len(layers)-1):
+        for j in range(layers[i]):
+            for k in range(layers[i+1]):
+                x_values = [x[sum(layers[0:i])+j], x[sum(layers[0:i+1])+k]]
+                y_values = [y[sum(layers[0:i])+j], y[sum(layers[0:i+1])+k]]
+                plt.plot(x_values, y_values, color = 'red', linestyle="-")
 
 
-# initialization function 
-def init(): 
-	# creating an empty plot/frame 
-	line.set_data([], []) 
-	return line, 
-
-# lists to store x and y axis points 
-xdata, ydata = [], [] 
-
-# animation function 
-def animate(i): 
-
-	# t is a parameter 
-	t = 0.1*i 
-	
-	# x, y values to be plotted 
-	x = t*np.sin(t) 
-	y = t 
-	
-	# appending new points to x, y axes points list 
-	xdata.append(x) 
-	ydata.append(y) 
-	line.set_data(xdata, ydata) 
-
-	return line, 
+    graph.set_data(x,y)
+    return graph
+    
 
 
-# setting a title for the plot 
-plt.title('Creating a growing coil with matplotlib!') 
-# hiding the axis details 
-plt.axis('off') 
-
-circle1 = plt.Circle((0, 0), 10, color='red')
-ax.add_artist(circle1)
-
-# call the animator	 
-anim = animation.FuncAnimation(fig, animate, init_func=init, frames=500, interval=20, blit=True) 
-
-plt.show()
