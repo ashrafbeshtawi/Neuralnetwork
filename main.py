@@ -1,13 +1,11 @@
-from multiprocessing import Process
+import _thread
 import visual
 import mutate
 
 
+shared_list = []
+_thread.start_new_thread( mutate.muatete_run, ( shared_list, ) )
+visual.runGraph(shared_list)
+#mutate.muatete_run(shared_list)
 
-if __name__ == '__main__':
-    p = Process(target = visual.runGraph)
-    w = Process(target = mutate.muatete_run)
-    p.start()
-    w.start()
-    w.join()
-    p.join()
+

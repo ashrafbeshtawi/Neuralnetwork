@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt 
 import matplotlib.animation as ani
 
-nn = None
 PLOT_HEIGHT = 1000
 PLOT_WIDTH = 1000
 fig = plt.figure() 
@@ -9,16 +8,14 @@ plt.xlim(0, PLOT_WIDTH)
 plt.ylim(0, PLOT_HEIGHT)
 graph, = plt.plot([], [], 'o')
 
-def runGraph():
+def runGraph(NeuralNetwork_layers):
     animator = ani.FuncAnimation(fig, anim, fargs= (NeuralNetwork_layers,), interval = 3000)
     plt.show()
 
 def anim(i, NeuralNetwork_layers):
-    print(NeuralNetwork_layers)
-    return
-    if (nn == None) :
+    if (NeuralNetwork_layers == None) :
         return
-    layers = nn
+    layers = NeuralNetwork_layers
     x = []
     y = []
     ## draw neurons
