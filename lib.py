@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from matplotlib import pyplot as plt
+
 
 
 class NeuralNetwork:
@@ -125,24 +125,13 @@ def predict(input,weights,bias,activation_func,last_layer_activ_func):
 def print_component(weights,bias):
     for i in range(len(weights)):
         print("weight: \n",weights[i],end="   ")
-        #if(i==0):
-        #    print(weights[0].shape[1]*["input layer"])
-        #elif(i==len(weights)-1):
-        #    print(bias[i-1])
-        #    print("-----------")
-        #    print(weights[len(weights)-1].shape[1]*["ouput layer"])
-        #else:
         print("bias: ",bias[i])
 
         print("-----------")
 
-
-
 # cost function
 def cost_calculate(prediction,correct):
     return np.divide(np.power(np.subtract(correct,prediction),2),2)
-
-
 
 def train(input,output,weights_i,bias_i,activation_func,deriv,last_layer_activ_func,last_layer_activ_func_deriv,epoch_size,iterations,learning_rate):
 
@@ -268,10 +257,6 @@ def train(input,output,weights_i,bias_i,activation_func,deriv,last_layer_activ_f
     #print("component",weights,"\n bias",bias)
     return weights,bias
 
-
-
-
-
 def test(w,b,input,output,activ,last_activ):
     ##total performance
     total=np.array([0])
@@ -297,8 +282,6 @@ def test(w,b,input,output,activ,last_activ):
             sum=sum+1
             i=i+1
     return 1-(total/sum)
-
-
 
 def test_print(w,b,input,output,activ,last_activ):
     ##total performance
@@ -327,7 +310,14 @@ def test_print(w,b,input,output,activ,last_activ):
             sum=sum+1
             i=i+1
 
-            
+## Generates a hidden layers shape with
+# the given possible number of layers and neurons
+def get_random_hidden_layers(max_layers, max_neurons):
+    layers = random.randint(1, max_layers)
+    layers_shape = []
+    for i in range(layers):   
+        layers_shape.append(random.randint(1, max_neurons))    
+    return layers_shape     
 
 
 

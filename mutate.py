@@ -1,26 +1,30 @@
-from ast import operator
-from operator import ge
-from lib import NeuralNetwork, test_print
-import helper
+from lib import NeuralNetwork, get_random_hidden_layers
 import data
 import random
 import numpy as np
 
-def muatete_run(shared_Neural_Network):
+def muatete_run(
+    shared_Neural_Network,input, output,
+    hidden_layers_shape,gen_Size, gen_Num,
+    hidden_activ, last_activ, selection_Ratio,
+    rare_mutaion, print_result,
+    hidden_layers_max_size,
+    hidden_layers_max_neurons):
     ### GENERATION CONFIG
-    NUMBER_OF_GENERATIONS = 100
-    GENERATION_SIZE = 500
+    NUMBER_OF_GENERATIONS = gen_Num
+    GENERATION_SIZE = gen_Size
     ### NN CONFIG
-    STARTING_STRUCTURE = [16,1,1]
-    HIDDEN_LAYERS_ACTIVIATION = helper.sig
-    LAST_LAYER_ACTIVATION = helper.tanh
+    if(hidden_layers_shape != 'random'):
+        STARTING_STRUCTURE = hidden_layers_shape
+        STARTING_STRUCTURE.insert(0,len(input[0]))
+        STARTING_STRUCTURE.insert(len(STARTING_STRUCTURE)+1,len(output[0]))
+    HIDDEN_LAYERS_ACTIVIATION = hidden_activ
+    LAST_LAYER_ACTIVATION = last_activ
     ### MUTAION CONFIG
-    ## rare mutation means new layer
-    ## normal mutation is adjestment to available layer
-    CHANCE_OF_RARE_MUTAION = 50
-    SELECTION_RATIO = 0.5
+    CHANCE_OF_RARE_MUTAION = rare_mutaion
+    SELECTION_RATIO = selection_Ratio
 
-    ## chose & mutate Nueral network
+    ## choose & mutate Nueral network
     def mutate(generation,old_population_limit):
         ## pick a NN
         NN = generation[random.randint(0,old_population_limit-1)]['Neuralnetwork']
@@ -36,7 +40,7 @@ def muatete_run(shared_Neural_Network):
         for i in range(len(b_old)):
             b_copy.append(np.copy(b_old[i]))
 
-        ## chose to mutate weights or bias
+        ## choose to mutate weights or bias
         rare_mutation = random.randint(0,100)
         if(rare_mutation < CHANCE_OF_RARE_MUTAION):
             ## layer size is random and between 1 neuron to the biggest available layer + random number
@@ -84,19 +88,15 @@ def muatete_run(shared_Neural_Network):
 
         generation += [{'Neuralnetwork':nn_mutated,'performace':0}]
 
-
-
-
     ## saved in in (Neuralnetwork,performace) pairs
     generation = []
-
-    #input,output = data.get_xy_problems(200,-1,1)
-    #input,output = data.logical(200)
-    input,output = data.fourones(200)
-
-
     ## generate first generation
     for i in range(GENERATION_SIZE):
+        if(hidden_layers_shape == 'random'):
+            STARTING_STRUCTURE = get_random_hidden_layers(hidden_layers_max_size,hidden_layers_max_neurons)
+            STARTING_STRUCTURE.insert(0,len(input[0]))
+            STARTING_STRUCTURE.insert(len(STARTING_STRUCTURE)+1,len(output[0]))
+
         nn = NeuralNetwork(STARTING_STRUCTURE,'xavier')
         performance = nn.test(input,output,HIDDEN_LAYERS_ACTIVIATION,LAST_LAYER_ACTIVATION)
         ## save generation with performace
@@ -113,11 +113,13 @@ def muatete_run(shared_Neural_Network):
         generation = generation[0:survived]
 
         ### print results
-        print('Generation:',i)
-        print('Best Neural Network: ',generation[0]['performace']*100,'%','Worst Neural Network: ',generation[-1]['performace']*100,'%')
-        print('Best NN structure: ',generation[0]['Neuralnetwork'].get_layers(),'Worst NN structure:: ',generation[-1]['Neuralnetwork'].get_layers())
+        if(print_result):
+            print('Generation:',i)
+            print('Best Neural Network: ',generation[0]['performace']*100,'%','Worst Neural Network: ',generation[-1]['performace']*100,'%')
+            print('Best NN structure: ',generation[0]['Neuralnetwork'].get_layers(),'Worst NN structure:: ',generation[-1]['Neuralnetwork'].get_layers())
         shared_Neural_Network['Neuralnetwork'] = generation[0]['Neuralnetwork']
-        shared_Neural_Network['performace'] = generation[0]['performace']
+        shared_Neural_Network['performace'] = generation[0]['performace']*100
+        shared_Neural_Network['generation'] = i
         ### Start mutations & creating generations
         for i in range(to_be_created):
                 mutate(generation,survived)
@@ -126,13 +128,9 @@ def muatete_run(shared_Neural_Network):
                 performance = generation[i]['Neuralnetwork'].test(input,output,HIDDEN_LAYERS_ACTIVIATION,LAST_LAYER_ACTIVATION)
                 generation[i]['performace'] = performance[0]
         
-
     ### best fit
     best_nn = generation[0]['Neuralnetwork']
 
-
-    #input,output = data.get_xy_problems(1000,-1,1)
-    input,output = data.fourones(1000)
 
     print(best_nn.test(input,output,HIDDEN_LAYERS_ACTIVIATION,LAST_LAYER_ACTIVATION)*100)
 
