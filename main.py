@@ -3,9 +3,9 @@ import visual
 import mutate
 
 
-shared_list = []
-_thread.start_new_thread( mutate.muatete_run, ( shared_list, ) )
-visual.runGraph(shared_list)
-#mutate.muatete_run(shared_list)
+shared_Neural_Network = {}
+_thread.start_new_thread( mutate.muatete_run, ( shared_Neural_Network, ) )
+visual.runGraph(shared_Neural_Network)
+
 
 

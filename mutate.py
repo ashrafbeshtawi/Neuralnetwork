@@ -6,12 +6,12 @@ import data
 import random
 import numpy as np
 
-def muatete_run(NeuralNetwork_layers):
+def muatete_run(shared_Neural_Network):
     ### GENERATION CONFIG
     NUMBER_OF_GENERATIONS = 100
     GENERATION_SIZE = 500
     ### NN CONFIG
-    STARTING_STRUCTURE = [16,4,1]
+    STARTING_STRUCTURE = [16,1,1]
     HIDDEN_LAYERS_ACTIVIATION = helper.sig
     LAST_LAYER_ACTIVATION = helper.tanh
     ### MUTAION CONFIG
@@ -116,8 +116,8 @@ def muatete_run(NeuralNetwork_layers):
         print('Generation:',i)
         print('Best Neural Network: ',generation[0]['performace']*100,'%','Worst Neural Network: ',generation[-1]['performace']*100,'%')
         print('Best NN structure: ',generation[0]['Neuralnetwork'].get_layers(),'Worst NN structure:: ',generation[-1]['Neuralnetwork'].get_layers())
-        NeuralNetwork_layers[:] = generation[0]['Neuralnetwork'].get_layers()
-
+        shared_Neural_Network['Neuralnetwork'] = generation[0]['Neuralnetwork']
+        shared_Neural_Network['performace'] = generation[0]['performace']
         ### Start mutations & creating generations
         for i in range(to_be_created):
                 mutate(generation,survived)
