@@ -1,6 +1,6 @@
-from lib import NeuralNetwork 
+from library.lib import NeuralNetwork 
 import numpy as np
-import helper
+import library.helper as helper
 
 for i in range(100):
     nn = NeuralNetwork([1,2,3,4],'xavier')

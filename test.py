@@ -1,4 +1,4 @@
-from lib import predict,sig,Relu,Relu_deriv,get_component,cost_calculate,L_Relu,L_Relu_D
+from library.lib import predict,sig,Relu,Relu_deriv,get_component,cost_calculate,L_Relu,L_Relu_D
 import numpy as np
 
 
