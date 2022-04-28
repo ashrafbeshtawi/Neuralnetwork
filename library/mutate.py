@@ -103,7 +103,6 @@ def muatete_run(
         generation.append({'Neuralnetwork':nn,'performace':performance[0]})
 
     for i in range(NUMBER_OF_GENERATIONS):
-        print('evolving...')
         ### sorting the generation
         generation.sort(key=lambda x:x['performace'],reverse = True)
 
@@ -116,8 +115,12 @@ def muatete_run(
         ### print results
         if(print_result):
             print('Generation:',i)
-            print('Best Neural Network: ',generation[0]['performace']*100,'%','Worst Neural Network: ',generation[-1]['performace']*100,'%')
-            print('Best NN structure: ',generation[0]['Neuralnetwork'].get_layers(),'Worst NN structure:: ',generation[-1]['Neuralnetwork'].get_layers())
+            print('Best Neural Network: accuracy:',generation[0]['performace']*100,'%','Shape:',generation[0]['Neuralnetwork'].get_layers())
+            print('Worst Neural Network: accuracy:',generation[-1]['performace']*100,'%','Shape:',generation[-1]['Neuralnetwork'].get_layers())
+            ### make sample prediction
+            index = random.randint(0,len(input)-1)
+            layer_activation,z = generation[0]['Neuralnetwork'].predict(input[index],HIDDEN_LAYERS_ACTIVIATION,LAST_LAYER_ACTIVATION)
+            print('Sample prediction: ', np.round(layer_activation[-1]) , 'Correct Answer: ',output[index])
         shared_Neural_Network['Neuralnetwork'] = generation[0]['Neuralnetwork']
         shared_Neural_Network['performace'] = generation[0]['performace']*100
         shared_Neural_Network['generation'] = i

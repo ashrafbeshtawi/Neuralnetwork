@@ -15,19 +15,19 @@ PLOT_INTERVAL = 1500
 NUMBER_OF_GENERATIONS = 100
 GENERATION_SIZE = 500
 ### NN CONFIG
-HIDDEN_LAYERS_SHAPE = 'random' ### list like [16,1,1] OR 'random' for random shapes
+HIDDEN_LAYERS_SHAPE = [10,10] ### list like [16,1,1] OR 'random' for random shapes
 MAX_HIDDEN_LAYERS = 10 ## only if hidden layers shape = random
 MAX_NEURONS_IN_HIDDEN_LAYERS = 5 ## only if hidden layers shape = random
-HIDDEN_LAYERS_ACTIVIATION = helper.sig
-LAST_LAYER_ACTIVATION = helper.tanh
+HIDDEN_LAYERS_ACTIVIATION = helper.Relu
+LAST_LAYER_ACTIVATION = helper.sig
 ### MUTAION CONFIG
 ## rare mutation means new layer
 ## normal mutation is adjestment to available layer
-CHANCE_OF_RARE_MUTAION = 50
-SELECTION_RATIO = 0.5
+CHANCE_OF_RARE_MUTAION = 20
+SELECTION_RATIO = 0.6
 
 ### Problem to be solved
-input, output = MNIST.getMNIST(10)
+input, output = MNIST.getMNIST(100)
 #input,output = data.get_xy_problems(200,-1,1)
 #input,output = data.logical(200)
 #input,output = data.fourones(200)

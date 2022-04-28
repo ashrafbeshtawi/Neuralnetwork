@@ -21,22 +21,3 @@ def getMNIST(number_of_samples):
     return np.array(input), np.array(output)
 
 
-"""
-# Specify a data loader which returns 500 examples in each iteration.
-n = 1
-loader = utils.data.DataLoader(mnist, batch_size=n, shuffle=True)
-
-# Iterate over the batches.
-i = 0
-for item in loader:
-    print(item[0][0][0].flatten().shape)
-    sample = 1
-    image =item[0][0][0]
-    # plot the sample
-    fig = plt.figure
-    plt.imshow(image, cmap='gray')
-    plt.show()
-    exit()
-print(i)
-"""
-

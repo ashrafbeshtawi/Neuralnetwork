@@ -13,6 +13,10 @@ def sig_deriv(num):
     res=sig(num)
     return np.multiply(res,np.subtract(1,res))
 
+def softmax(vector):
+	e = np.exp(vector)
+	return e / e.sum()
+
 ## tahn
 def tanh(x):
 	return (np.exp(x) - np.exp(-x)) / (np.exp(x) + np.exp(-x))
